@@ -4,6 +4,45 @@
   
     
     <entry>
+      <title>STEGA-LSB</title>
+      <link href="/2026/07/11/STEGA-LSB/"/>
+      <url>/2026/07/11/STEGA-LSB/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>STEGA-直接附加</title>
+      <link href="/2026/07/10/STEGA-%E7%9B%B4%E6%8E%A5%E9%99%84%E5%8A%A0/"/>
+      <url>/2026/07/10/STEGA-%E7%9B%B4%E6%8E%A5%E9%99%84%E5%8A%A0/</url>
+      
+        <content type="html"><![CDATA[<h1 id="STEGA-直接附加"><a href="#STEGA-直接附加" class="headerlink" title="STEGA-直接附加"></a>STEGA-直接附加</h1><h2 id="简单介绍一下"><a href="#简单介绍一下" class="headerlink" title="简单介绍一下"></a>简单介绍一下</h2><p>众所周知，文件后缀往往反应着文件类型，but！实际上不一定准确，文件后缀可以进行修改，但文件类型不一定因为文件后缀被修改而变化。而程序们有自己的方式去判断文件类型，并按照正确的方式去读取文件，这就是文件头的作用了~<br>大部分文件类型的文件结构是：文件头+文件内容(+文件尾)  <em>（文件尾并非所有文件类型都有）</em><br>含有文件尾的文件读取时，读到文件尾就结束了，而文件尾后的内容会被忽略，<em>不会对文件的查看造成影响</em>，故而能在文件后写入隐藏的信息&#x2F;文件，这就是直接附加了sa~   </p><h2 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h2><p>大部分文件都有其固定的文件结构，常见的图片格式如PNG、JPG等都是由一系列特定的数据块组成的。<br><em>下面以PNG文件为例介绍一下~</em><br>PNG文件由4部分标准数据块和一些辅助数据块组成，以下是四个标准数据块：   </p><ul><li>IHDR文件头数据块 <strong>（并非文件头！！！）</strong></li><li>PLTE调色板数据块</li><li>IDAT图像数据块</li><li>IEND图像结束数据块</li></ul><p>而每一个数据块都由四部分组成：  </p><ul><li>length长度</li><li>chunk type code数据块类型码</li><li>chunk data数据块数据</li><li>CRC循环冗余校验码</li></ul><p>而其中IEND数据块的长度总是<code>00 00 00 00</code>，数据标识总是<code>49 45 4E 44</code>CRC固定为<code>AE 42 60 82</code>。<br>所以一般PNG文件以固定<code>00 00 00 00 49 45 4E 44 AE 42 60 82</code>作为结束。此时在82之后（即IEND数据块之后）添加其他内容&#x2F;文件，在查看图片时则会被图片查看器忽略。</p><h2 id="一些常见的文件类型"><a href="#一些常见的文件类型" class="headerlink" title="一些常见的文件类型~"></a>一些常见的文件类型~</h2><p>下面来看看一些常见的文件类型和他们的相关内容吧~</p><table><thead><tr><th>文件类型</th><th>扩展名</th><th align="right">文件头</th><th align="right">文件尾</th><th>ASCII &#x2F; 说明</th></tr></thead><tbody><tr><td>JPEG</td><td><code>.jpg</code> <code>.jpeg</code></td><td align="right"><code>FF D8 FF</code></td><td align="right"><code>FF D9</code></td><td>文件头为<code>ÿØ</code>，文件尾是<code>ÿÙ</code></td></tr><tr><td>PNG</td><td><code>.png</code></td><td align="right"><code>89 50 4E 47 0D 0A 1A 0A</code></td><td align="right"><code>00 00 00 00 49 45 4E 44 AE 42 60 82</code></td><td>文件头为<code>‰PNG..</code>，文件尾是 <code>IEND</code> chunk</td></tr><tr><td>GIF87a</td><td><code>.gif</code></td><td align="right"><code>47 49 46 38 37 61</code></td><td align="right"><code>3B</code></td><td>文件头为 <code>GIF87a</code>，尾字节 <code>3B</code> 是 GIF Trailer</td></tr><tr><td>GIF89a</td><td><code>.gif</code></td><td align="right"><code>47 49 46 38 39 61</code></td><td align="right"><code>3B</code></td><td>文件头为 <code>GIF89a</code>，尾字节同样是 <code>3B</code></td></tr><tr><td>PDF</td><td><code>.pdf</code></td><td align="right"><code>25 50 44 46 2D</code></td><td align="right"><code>25 25 45 4F 46</code></td><td>文件头为 <code>%PDF-</code>，文件尾为 <code>%%EOF</code></td></tr><tr><td>ZIP</td><td><code>.zip</code> <code>.jar</code> <code>.apk</code> <code>.docx</code> <code>.xlsx</code> <code>.pptx</code></td><td align="right"><code>50 4B 03 04</code></td><td align="right"><code>50 4B 05 06</code></td><td>文件头为<code>PK...</code></td></tr><tr><td>空 ZIP</td><td><code>.zip</code></td><td align="right"><code>50 4B 05 06</code></td><td align="right"><code>50 4B 05 06</code></td><td><code>PK 05 06</code>空 ZIP 可能直接以 EOCD 开头</td></tr><tr><td>TAR</td><td><code>.tar</code></td><td align="right"><code>75 73 74 61 72</code>，偏移 <code>0x101</code> &#x2F; <code>257</code></td><td align="right">两个连续的 <code>512</code> 字节全零块</td><td>TAR 的 <code>ustar</code> 不在文件开头，而是在偏移 <code>257</code> 处</td></tr><tr><td>XZ</td><td><code>.xz</code></td><td align="right"><code>FD 37 7A 58 5A 00</code></td><td align="right">结尾通常为 <code>59 5A</code></td><td>文件头为<code>.7zXZ.</code>，<code>59 5A</code> 即 ASCII <code>YZ</code>，是 XZ Stream Footer 末尾魔数</td></tr><tr><td>RAR4</td><td><code>.rar</code></td><td align="right"><code>52 61 72 21 1A 07 00</code></td><td align="right">无</td><td>文件头为<code>Rar!...</code></td></tr><tr><td>RAR5</td><td><code>.rar</code></td><td align="right"><code>52 61 72 21 1A 07 01 00</code></td><td align="right">无</td><td>文件头为<code>Rar!...</code></td></tr></tbody></table>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Mirage Tank</title>
+      <link href="/2026/07/08/Mirage-Tank/"/>
+      <url>/2026/07/08/Mirage-Tank/</url>
+      
+        <content type="html"><![CDATA[<h1 id="幻影坦克"><a href="#幻影坦克" class="headerlink" title="幻影坦克"></a>幻影坦克</h1><h2 id="什么是幻影坦克呢"><a href="#什么是幻影坦克呢" class="headerlink" title="什么是幻影坦克呢"></a>什么是幻影坦克呢</h2><p>在一款叫红警的游戏中，有一种坦克名为幻影坦克~虽然它并不能隐形，但是却可以折射周围的光线，比如将自己伪装成一棵树而不被敌军发现。<br>而幻影坦克图片也有类似特性，在缩略图状态下&#x2F;浅色背景浏览时，与点开图片后&#x2F;深色背景查看时所展现的画面会不同，故而称作幻影坦克sa ~<br>嗯…准确来说，幻影坦克是利用了PNG图片的Alpha通道（透明度）特性，通过精心设计RGB颜色值和透明度，使同一张图片在不同背景色下呈现不同的视觉效果。  </p><h2 id="下面是制作幻影坦克的其中一种方法"><a href="#下面是制作幻影坦克的其中一种方法" class="headerlink" title="下面是制作幻影坦克的其中一种方法"></a>下面是制作幻影坦克的其中一种方法</h2><ol><li>打开两张素材，拖到一起 <strong>(最好是长宽一样sa~)</strong></li><li>选中一个图层后，<code>ctrl+shift+u</code>去色（两个图层都要去色）  <em>（说明：第二步是制作黑白幻影所需要的操作，如果制作彩色幻影则可以无视第二步。直接进入第三步即可）</em></li><li>选择一个图层后，点击-图像-调整-色阶。调整下面的输出色阶，让图片“变亮或者变暗”。<em>（说明：调亮的图片是用来做幻影表面的&#x2F;调暗的图片是用来做点开图片后显示的内容的）</em> 还有要注意的是，这里的调色阶要把控一个度，让图片能尽量还原即可，只要调整到两张图有亮暗区分就行 <em><strong>（成品图片最终呈现效果与这里的色阶参数有关，具体参数需要自己凭需求调整！！！）</strong></em></li><li>关闭调整完的图层的小眼睛，选择另一张图进行同样的操作。不同的是这张图调相反的方向，即如果上一张图调亮这张图就调暗。参数自己控制好。</li><li>下面把每个图层编号一下更方便说明：A-代表是刚才调亮的图层<br> B-代表调暗的图层<br> 1-表示第一次盖印得到的图层（<code>ctrl+shift+alt+E</code>为图层盖印）<br> 2-表示第二次盖印得到的图层</li><li>选择A图层，打开图层小眼睛，<code>ctrl+i</code>反相</li><li>调整图层顺序，A在B上面，再将A的混合模式改为“线性减淡（添加）”</li><li>按<code>ctrl+shift+alt+E</code>盖印——得到第一个盖印图层“1”</li><li>调整图层顺序，1在B上面;把A的小眼睛关掉。将1的混合模式改为“划分”，之后再<code>ctrl+shift+alt+E</code>盖印得到“2”</li><li>然后把1的混合模式改回正常 </li><li>把除了1以外的图层小眼睛都关掉</li><li>选择1图层进入它的通道面板，选择一个单色通道，例如选择红色，然后按住<code>ctrl+用鼠标左键点击红色通道的缩略图</code>，得到选区</li><li>回到图层面板,打开2图层小眼睛，并选择2图层（这时是有选区的），点击下面的“添加图层蒙版”</li><li>关闭1的图层小眼睛（也可以理解为只留下2的小眼睛其他都关掉），此时图层“2”就是完成的（彩色）幻影图了，恭喜做到这里的人毕业了，保存png格式即可喵~</li></ol>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>芝士甚么?WIFI密码!</title>
       <link href="/2026/07/07/%E8%8A%9D%E5%A3%AB%E7%94%9A%E4%B9%88-WIFI%E5%AF%86%E7%A0%81/"/>
       <url>/2026/07/07/%E8%8A%9D%E5%A3%AB%E7%94%9A%E4%B9%88-WIFI%E5%AF%86%E7%A0%81/</url>
